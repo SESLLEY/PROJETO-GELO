@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Relatório de Clientes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+body{
+font-family:Arial;
+background:#eef2f5;
+padding:20px;
+}
+
+.container{
+max-width:600px;
+margin:auto;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:10px;
+margin-bottom:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+.nome{
+font-weight:bold;
+font-size:18px;
+}
+
+.info{
+color:#555;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🧊 Clientes que mais compram</h2>
+
+{% for cliente in relatorio %}
+
+<div class="card">
+
+<div class="nome">
+{{ cliente.cliente__nome }}
+</div>
+
+<div class="info">
+Sacos comprados: {{ cliente.total_sacos }}
+</div>
+
+<div class="info">
+Total gasto: R$ {{ cliente.total_gasto }}
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</body>
+</html>

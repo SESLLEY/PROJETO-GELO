@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registrar Venda</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef2f5;
+            margin: 0;
+            padding: 15px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            max-width: 420px;
+            margin: auto;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            font-size: 22px;
+            text-align:center;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 12px;
+            text-align: left;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 16px;
+            margin-top: 6px;
+            font-size: 18px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+
+        input[type=number] {
+            text-align: center;
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        .quick-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .quick-buttons button {
+            padding: 14px;
+            font-size: 18px;
+            border-radius: 10px;
+            border: none;
+            background: #dee6ed;
+            font-weight: bold;
+        }
+
+        .quick-buttons button:active {
+            background: #c7d4df;
+        }
+
+        button.submit {
+            margin-top: 18px;
+            width: 100%;
+            padding: 18px;
+            font-size: 20px;
+            border: none;
+            border-radius: 12px;
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+        }
+
+        button.submit:active {
+            background-color: #1e7e34;
+        }
+
+        .btn-avulso {
+            margin-top:10px;
+            width:100%;
+            padding:12px;
+            border:none;
+            border-radius:10px;
+            background:#f1f3f5;
+            font-size:16px;
+            font-weight:bold;
+        }
+
+        .btn-avulso:active{
+            background:#dde2e6;
+        }
+
+        .total {
+            font-size: 24px;
+            margin-top: 15px;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .sucesso {
+            margin-top: 12px;
+            color: green;
+            font-weight: bold;
+            text-align:center;
+        }
+
+        .preco-info {
+            font-size: 14px;
+            color: #666;
+            margin-top: 4px;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>🧊 Nova Venda</h2>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="sucesso">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<form method="post">
+{% csrf_token %}
+
+<label>Cliente</label>
+<select name="cliente" id="cliente">
+{% for cliente in clientes %}
+<option value="{{ cliente.id }}">
+{{ cliente.nome }} {% if cliente.parceiro %}⭐{% endif %}
+</option>
+{% endfor %}
+</select>
+
+<button type="button" class="btn-avulso" onclick="mostrarAvulso()">
++ Cliente Avulso
+</button>
+
+<div id="clienteAvulsoBox" style="display:none;">
+<input type="text" name="cliente_avulso" placeholder="Digite o nome do cliente">
+</div>
+
+<label>Pagamento</label>
+<select name="pago">
+<option value="True">💰 Pago na hora</option>
+<option value="False">📒 Fiado</option>
+</select>
+
+<label>Quantidade de sacos</label>
+<input type="number" name="quantidade" id="quantidade" min="1" required>
+
+<div class="quick-buttons">
+<button type="button" onclick="setQtd(5)">5</button>
+<button type="button" onclick="setQtd(10)">10</button>
+<button type="button" onclick="setQtd(15)">15</button>
+<button type="button" onclick="setQtd(20)">20</button>
+</div>
+
+<div class="total" id="total">Total: R$ 0,00</div>
+
+<button type="submit" class="submit">
+Registrar Venda
+</button>
+
+</form>
+
+</div>
+
+<script>
+
+const precoNormal = 4.0;
+const precoParceiro = 3.5;
+
+const selectCliente = document.getElementById("cliente");
+const quantidadeInput = document.getElementById("quantidade");
+const totalDiv = document.getElementById("total");
+
+function atualizarTotal(){
+
+let preco = selectCliente.options[selectCliente.selectedIndex].text.includes("⭐")
+? precoParceiro
+: precoNormal;
+
+let qtd = quantidadeInput.value;
+
+if(qtd > 0){
+let total = qtd * preco;
+totalDiv.innerHTML = "Total: R$ " + total.toFixed(2);
+}
+else{
+totalDiv.innerHTML = "Total: R$ 0,00";
+}
+
+}
+
+function setQtd(valor){
+quantidadeInput.value = valor;
+atualizarTotal();
+}
+
+function mostrarAvulso(){
+const box = document.getElementById("clienteAvulsoBox");
+
+if(box.style.display === "none"){
+box.style.display = "block";
+}else{
+box.style.display = "none";
+}
+}
+
+quantidadeInput.addEventListener("input", atualizarTotal);
+selectCliente.addEventListener("change", atualizarTotal);
+
+</script>
+
+</body>
+</html>

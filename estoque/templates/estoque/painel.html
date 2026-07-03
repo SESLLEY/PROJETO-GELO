@@ -1,92 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
+
+{% load static %}
+
 <head>
 
-<title>Painel</title>
+    <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Painel</title>
 
-<style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-body{
-font-family:Arial;
-background:#eef2f5;
-padding:20px;
-}
+    <style>
 
-.container{
-max-width:500px;
-margin:auto;
-}
+        *{
+            box-sizing: border-box;
+        }
 
-.card{
-background:white;
-padding:20px;
-border-radius:12px;
-margin-bottom:15px;
-box-shadow:0 4px 12px rgba(0,0,0,0.1);
-}
+        body{
+    font-family: Arial, sans-serif;
 
-h2{
-text-align:center;
-}
+    background: url("{% static 'topgelo.png' %}") center center no-repeat fixed;
 
-.valor{
-font-size:28px;
-font-weight:bold;
-}
+    background-size: cover;
 
-.sacos{
-color:#007bff;
-}
+    margin: 0;
+    padding: 20px;
+        }
 
-.faturamento{
-color:green;
-}
+        .container{
+            max-width: 500px;
+            margin: auto;
+        }
 
-.fiado{
-color:red;
-}
+        .card{
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(6px);
 
-</style>
+            padding: 20px;
+            border-radius: 18px;
+
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+
+            margin-bottom: 20px;
+        }
+
+        h1{
+            text-align: center;
+            margin-bottom: 25px;
+            color: #0d3b66;
+        }
+
+        .info{
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            background: #f5f7fa;
+        }
+
+        .titulo{
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .valor{
+            font-size: 28px;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .fiado{
+            color: #dc3545;
+        }
+
+        .pago{
+            color: #28a745;
+        }
+
+        @media(max-width:600px){
+
+            body{
+                padding: 15px;
+            }
+
+            .valor{
+                font-size: 24px;
+            }
+
+        }
+
+    </style>
 
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-<h2>📊 Resumo de Hoje</h2>
+        <div class="card">
 
-<div class="card">
-Sacos vendidos
-<div class="valor sacos">
-{{ total_sacos }}
-</div>
-</div>
+            <h1>🧊 Painel Financeiro</h1>
 
-<div class="card">
-Faturamento
-<div class="valor faturamento">
-R$ {{ faturamento }}
-</div>
-</div>
+            <div class="info">
+                <div class="titulo">Total Vendido Hoje</div>
+                <div class="valor pago">
+                    R$ {{ total_hoje|default:"0,00" }}
+                </div>
+            </div>
 
-<div class="card">
-Fiado aberto
-<div class="valor fiado">
-R$ {{ fiado }}
-</div>
-</div>
+            <div class="info">
+                <div class="titulo">Total Recebido</div>
+                <div class="valor pago">
+                    R$ {{ total_pago|default:"0,00" }}
+                </div>
+            </div>
 
-<div class="card">
-Vendas realizadas
-<div class="valor">
-{{ total_vendas }}
-</div>
-</div>
+            <div class="info">
+                <div class="titulo">Total Fiado</div>
+                <div class="valor fiado">
+                    R$ {{ total_fiado|default:"0,00" }}
+                </div>
+            </div>
 
-</div>
+            <div class="info">
+                <div class="titulo">Quantidade de Vendas</div>
+                <div class="valor">
+                    {{ qtd_vendas }}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
 
 </body>
 </html>

@@ -1,91 +1,174 @@
 from django.db import models
 from django.utils import timezone
 
-#cadastro de clientes
+
+# ==========================================
+# CADASTRO DE CLIENTES
+# ==========================================
 
 class Cliente(models.Model):
     nome = models.CharField(max_length=100)
     descricao = models.TextField(blank=True, null=True)
-    preco_unitario = models.DecimalField(max_digits=6, decimal_places=2)
-    preco_atacado = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    quantidade_atacado = models.IntegerField(default=100)
-    ativo = models.BooleanField(default=True)
-    parceiro = models.BooleanField(default=False)
+
+    preco_unitario = models.DecimalField(
+        max_digits=6,
+        decimal_places=2
+    )
+
+    preco_atacado = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
+
+    quantidade_atacado = models.IntegerField(
+        default=100
+    )
+
+    ativo = models.BooleanField(
+        default=True
+    )
+
+    parceiro = models.BooleanField(
+        default=False
+    )
 
     def __str__(self):
         return self.nome
-   # cadastro de produtos 
+
+
+# ==========================================
+# CADASTRO DE PRODUTOS
+# ==========================================
+
 class Produto(models.Model):
-    nome = models.CharField(max_length=100)
-    preco = models.DecimalField(max_digits=6, decimal_places=2)
-    ativo = models.BooleanField(default=True)
+    nome = models.CharField(
+        max_length=100
+    )
+
+    preco = models.DecimalField(
+        max_digits=6,
+        decimal_places=2
+    )
+
+    ativo = models.BooleanField(
+        default=True
+    )
 
     def __str__(self):
         return self.nome
-    
-    #cadastro de classe de vendas , com as informações de cadastro por clientes
 
-    from django.utils import timezone
+
+# ==========================================
+# CADASTRO DE VENDAS
+# ==========================================
 
 class Venda(models.Model):
+
+    # Cliente cadastrado
     cliente = models.ForeignKey(
-        'Cliente',
+        Cliente,
         on_delete=models.SET_NULL,
         null=True,
         blank=True
     )
 
+    # Cliente que não possui cadastro
     cliente_avulso = models.CharField(
         max_length=100,
         blank=True,
         null=True
     )
 
-    produto = models.ForeignKey('Produto', on_delete=models.CASCADE)
+    # Produto vendido
+    produto = models.ForeignKey(
+        Produto,
+        on_delete=models.CASCADE
+    )
+
+    # Quantidade de sacos
     quantidade = models.PositiveIntegerField()
 
-    preco_unitario = models.DecimalField(max_digits=6, decimal_places=2)
-    valor_total = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    # Preço aplicado na venda
+    preco_unitario = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
 
-    pago = models.BooleanField(default=False)
-    data = models.DateTimeField(default=timezone.now)
+    # Valor total da venda
+    valor_total = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        blank=True,
+        null=True
+    )
 
-    # 👇 pode ficar aqui embaixo dos campos
+    # Pagamento
+    pago = models.BooleanField(
+        default=False
+    )
+
+    # Data da venda
+    data = models.DateTimeField(
+        default=timezone.now
+    )
+
+
+    # ==========================================
+    # SALVAR VENDA
+    # ==========================================
+
     def save(self, *args, **kwargs):
-        if not self.preco_unitario:
-            self.preco_unitario = self.produto.preco
 
-        self.valor_total = self.quantidade * self.preco_unitario
+        # ======================================
+        # CLIENTE PARCEIRO
+        # ======================================
 
-        super().save(*args, **kwargs)
+        if self.cliente and self.cliente.parceiro:
 
-    def __str__(self):
-        return f"{self.cliente} - {self.quantidade}"
-
-    def save(self, *args, **kwargs):
-        # aplica preço especial se for cliente parceiro
-        if self.cliente.parceiro:
             self.preco_unitario = 3.5
+
+
+        # ======================================
+        # CLIENTE NORMAL OU AVULSO
+        # ======================================
+
         else:
+
             self.preco_unitario = self.produto.preco
 
-        self.valor_total = self.preco_unitario * self.quantidade
+
+        # ======================================
+        # CALCULAR VALOR TOTAL
+        # ======================================
+
+        self.valor_total = (
+            self.preco_unitario * self.quantidade
+        )
+
 
         super().save(*args, **kwargs)
 
+
+    # ==========================================
+    # NOME DA VENDA
+    # ==========================================
+
     def __str__(self):
-        return f"{self.cliente} - {self.quantidade} sacos"
 
-        #cadastro de calsse dos clientes avulsos
+        if self.cliente:
 
-        class Venda(models.Model):
-            pass
-    cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True, blank=True)
-    cliente_avulso = models.CharField(max_length=100, blank=True, null=True)
+            nome = self.cliente.nome
 
-    produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
-    quantidade = models.IntegerField()
+        elif self.cliente_avulso:
 
-    pago = models.BooleanField(default=True)  # pago na hora ou fiado
+            nome = self.cliente_avulso
 
-    data = models.DateTimeField(auto_now_add=True)
+        else:
+
+            nome = "Cliente não informado"
+
+        return f"{nome} - {self.quantidade} sacos"

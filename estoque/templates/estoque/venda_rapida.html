@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+        {% load static %}
     <title>Registrar Venda</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,7 +15,7 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #eef2f5;
-            background-image: url('/static/topgelo.png');
+            background-image: url('{% static "topgelo.png" %}');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;

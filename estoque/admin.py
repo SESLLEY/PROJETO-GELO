@@ -5,7 +5,7 @@ from .models import Cliente, Produto, Venda
 class VendaInline(admin.TabularInline):
     model = Venda
     extra = 0
-    readonly_fields = ('produto', 'quantidade', 'valor_total', 'pago', 'data')
++    readonly_fields = ('produto', 'quantidade', 'valor_total', 'data')
 
 
 @admin.register(Cliente)

@@ -116,7 +116,6 @@ class Venda(models.Model):
         default=timezone.now
     )
 
-
     # ==========================================
     # SALVAR VENDA
     # ==========================================
@@ -131,7 +130,6 @@ class Venda(models.Model):
 
             self.preco_unitario = 3.5
 
-
         # ======================================
         # CLIENTE NORMAL OU AVULSO
         # ======================================
@@ -139,7 +137,6 @@ class Venda(models.Model):
         else:
 
             self.preco_unitario = self.produto.preco
-
 
         # ======================================
         # CALCULAR VALOR TOTAL
@@ -149,9 +146,7 @@ class Venda(models.Model):
             self.preco_unitario * self.quantidade
         )
 
-
         super().save(*args, **kwargs)
-
 
     # ==========================================
     # NOME DA VENDA
@@ -172,3 +167,14 @@ class Venda(models.Model):
             nome = "Cliente não informado"
 
         return f"{nome} - {self.quantidade} sacos"
+
+
+# ==========================================
+# RESUMO DE VENDAS (proxy para o Admin)
+# ==========================================
+
+class ResumoVendas(Venda):
+    class Meta:
+        proxy = True
+        verbose_name = "Resumo de Vendas"
+        verbose_name_plural = "Resumo de Vendas"

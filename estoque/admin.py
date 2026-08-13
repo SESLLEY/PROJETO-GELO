@@ -42,7 +42,27 @@ class ResumoVendasAdmin(admin.ModelAdmin):
         return False
 
     def changelist_view(self, request, extra_context=None):
-
         total_vendas = Venda.objects.count()
         vendas_pagas = Venda.objects.filter(pago=True).count()
-        vendas_pendentes =
+        vendas_pendentes = Venda.objects.filter(pago=False).count()
+
+        vendas_por_produto = (
+            Venda.objects.values('produto__nome')
+            .annotate(total=Count('id'))
+            .order_by('-total')
+        )
+
+        extra_context = extra_context or {}
+        extra_context.update({
+            'title': 'Resumo de Vendas',
+            'total_vendas': total_vendas,
+            'vendas_pagas': vendas_pagas,
+            'vendas_pendentes': vendas_pendentes,
+            'vendas_por_produto': vendas_por_produto,
+        })
+
+        return TemplateResponse(
+            request,
+            "admin/estoque/resumo_vendas.html",
+            extra_context,
+        )

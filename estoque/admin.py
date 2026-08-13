@@ -15,31 +15,8 @@ class VendaInline(admin.TabularInline):
 class ClienteAdmin(admin.ModelAdmin):
     list_display = ('nome', 'parceiro', 'ativo')
     inlines = [VendaInline]
-    # change_form_template = "admin/estoque/cliente/change_form.html"
 
-    def change_view(self, request, object_id, form_url='', extra_context=None):
-        extra_context = extra_context or {}
-
-        vendas = Venda.objects.filter(cliente_id=object_id)
-
-        total_pago = vendas.filter(pago=True).aggregate(
-            total=Sum('valor_total')
-        )['total'] or 0
-
-        total_prazo = vendas.filter(pago=False).aggregate(
-            total=Sum('valor_total')
-        )['total'] or 0
-
-        extra_context.update({
-            'total_pago': total_pago,
-            'total_prazo': total_prazo,
-            'saldo': total_prazo - total_pago,
-        })
-
-        return super().change_view(
-            request, object_id, form_url, extra_context=extra_context
-        )
-
+    
 @admin.register(Produto)
 class ProdutoAdmin(admin.ModelAdmin):
     list_display = ('nome', 'preco', 'ativo')

@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Cliente, Produto, Venda
+from django.db.models import Count
+from django.template.response import TemplateResponse
+from .models import Cliente, Produto, Venda, ResumoVendas
 
 
 class VendaInline(admin.TabularInline):
@@ -22,3 +24,25 @@ class ProdutoAdmin(admin.ModelAdmin):
 @admin.register(Venda)
 class VendaAdmin(admin.ModelAdmin):
     list_display = ('produto', 'cliente', 'quantidade', 'valor_total', 'pago', 'data')
+
+
+@admin.register(ResumoVendas)
+class ResumoVendasAdmin(admin.ModelAdmin):
+
+    def has_view_permission(self, request, obj=None):
+        return True
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+
+        total_vendas = Venda.objects.count()
+        vendas_pagas = Venda.objects.filter(pago=True).count()
+        vendas_pendentes =

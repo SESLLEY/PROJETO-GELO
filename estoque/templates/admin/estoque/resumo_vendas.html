@@ -3,6 +3,30 @@
 {% block content %}
 <h1>{{ title }}</h1>
 
+<form method="get" style="margin-bottom: 20px; display: flex; gap: 10px; align-items: end;">
+    <div>
+        <label>Cliente:</label><br>
+        <select name="cliente">
+            <option value="">Todos</option>
+            {% for cliente in clientes %}
+            <option value="{{ cliente.id }}" {% if cliente_selecionado == cliente.id|stringformat:"s" %}selected{% endif %}>
+                {{ cliente.nome }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label>De:</label><br>
+        <input type="date" name="data_inicio" value="{{ data_inicio }}">
+    </div>
+    <div>
+        <label>Até:</label><br>
+        <input type="date" name="data_fim" value="{{ data_fim }}">
+    </div>
+    <button type="submit">Filtrar</button>
+    <a href="?" style="margin-left: 10px;">Limpar</a>
+</form>
+
 <div style="display: flex; gap: 20px; margin-bottom: 30px;">
     <div style="border: 1px solid #ccc; padding: 15px; border-radius: 6px;">
         <strong>Total de vendas</strong><br>
@@ -27,5 +51,3 @@
         <td>{{ item.total }}</td>
     </tr>
     {% endfor %}
-</table>
-{% endblock %}

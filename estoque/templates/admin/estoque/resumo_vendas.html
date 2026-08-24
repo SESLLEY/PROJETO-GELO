@@ -36,12 +36,16 @@
 
     <div style="border: 1px solid #ccc; padding: 15px; border-radius: 6px; min-width: 150px;">
         <strong>Pagas</strong><br>
-        <span style="font-size: 24px;">{{ vendas_pagas }}</span>
+        <span style="font-size: 24px;">
+            <a href="{% url 'admin:estoque_venda_changelist' %}?pago__exact=1">{{ vendas_pagas }}</a>
+        </span>
     </div>
 
     <div style="border: 1px solid #ccc; padding: 15px; border-radius: 6px; min-width: 150px;">
         <strong>Pendentes</strong><br>
-        <span style="font-size: 24px;">{{ vendas_pendentes }}</span>
+        <span style="font-size: 24px;">
+            <a href="{% url 'admin:estoque_venda_changelist' %}?pago__exact=0">{{ vendas_pendentes }}</a>
+        </span>
     </div>
 
     <div style="border: 1px solid #ccc; padding: 15px; border-radius: 6px; min-width: 180px;">
@@ -54,14 +58,14 @@
     <div style="border: 1px solid #ccc; padding: 15px; border-radius: 6px; min-width: 180px;">
         <strong>Valor Pago</strong><br>
         <span style="font-size: 24px;">
-            R$ {{ total_pago|floatformat:2 }}
+            <a href="{% url 'admin:estoque_venda_changelist' %}?pago__exact=1">R$ {{ total_pago|floatformat:2 }}</a>
         </span>
     </div>
 
     <div style="border: 1px solid #ccc; padding: 15px; border-radius: 6px; min-width: 180px;">
         <strong>Valor a Prazo</strong><br>
         <span style="font-size: 24px;">
-            R$ {{ total_prazo|floatformat:2 }}
+            <a href="{% url 'admin:estoque_venda_changelist' %}?pago__exact=0">R$ {{ total_prazo|floatformat:2 }}</a>
         </span>
     </div>
 

@@ -1,8 +1,7 @@
 from django.contrib import admin
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.template.response import TemplateResponse
 from .models import Cliente, Produto, Venda, ResumoVendas
-from django.db.models import Count, Sum
 
 
 class VendaInline(admin.TabularInline):
@@ -16,7 +15,7 @@ class ClienteAdmin(admin.ModelAdmin):
     list_display = ('nome', 'parceiro', 'ativo')
     inlines = [VendaInline]
 
-    
+
 @admin.register(Produto)
 class ProdutoAdmin(admin.ModelAdmin):
     list_display = ('nome', 'preco', 'ativo')
@@ -58,9 +57,22 @@ class ResumoVendasAdmin(admin.ModelAdmin):
         if data_fim:
             vendas = vendas.filter(data__date__lte=data_fim)
 
+        # Quantidade de vendas
         total_vendas = vendas.count()
         vendas_pagas = vendas.filter(pago=True).count()
         vendas_pendentes = vendas.filter(pago=False).count()
+
+        total_valor_vendas = vendas.aggregate(
+            total=Sum('valor_total')
+        )['total'] or 0
+
+        total_pago = vendas.filter(pago=True).aggregate(
+            total=Sum('valor_total')
+        )['total'] or 0
+
+        total_prazo = vendas.filter(pago=False).aggregate(
+            total=Sum('valor_total')
+        )['total'] or 0
 
         vendas_por_produto = (
             vendas.values('produto__nome')
@@ -68,12 +80,14 @@ class ResumoVendasAdmin(admin.ModelAdmin):
             .order_by('-total')
         )
 
-        extra_context = extra_context or {}
         extra_context.update({
             'title': 'Resumo de Vendas',
             'total_vendas': total_vendas,
             'vendas_pagas': vendas_pagas,
             'vendas_pendentes': vendas_pendentes,
+            'total_valor_vendas': total_valor_vendas,
+            'total_pago': total_pago,
+            'total_prazo': total_prazo,
             'vendas_por_produto': vendas_por_produto,
             'clientes': Cliente.objects.all().order_by('nome'),
             'cliente_selecionado': cliente_id,

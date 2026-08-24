@@ -80,6 +80,8 @@ class ResumoVendasAdmin(admin.ModelAdmin):
             .order_by('-total')
         )
 
+        extra_context = extra_context or {}
+
         extra_context.update({
             'title': 'Resumo de Vendas',
             'total_vendas': total_vendas,

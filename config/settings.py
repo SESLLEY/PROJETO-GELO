@@ -12,6 +12,7 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 CSRF_TRUSTED_ORIGINS = ['https://projeto-gelo-production.up.railway.app']
 
 INSTALLED_APPS = [
+    'jazzmin',                        
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -21,6 +22,27 @@ INSTALLED_APPS = [
     'galeria',
     'estoque',
 ]
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Top Gelos Admin",
+    "site_header": "Top Gelos",
+    "site_brand": "Top Gelos",
+    "site_logo": "topgelo.png",
+    "welcome_sign": "Bem-vindo ao painel Top Gelos",
+    "copyright": "Top Gelos",
+    "search_model": ["estoque.cliente", "estoque.venda"],
+
+    "order_with_respect_to": ["auth", "estoque"],
+
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "estoque.cliente": "fas fa-user-tag",
+        "estoque.venda": "fas fa-shopping-cart",
+        "estoque.produto": "fas fa-box",
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

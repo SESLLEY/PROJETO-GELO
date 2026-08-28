@@ -8,10 +8,10 @@
     <p style="margin: 4px 0;"><strong>Prazo:</strong> - R$ {{ total_prazo }}</p>
     <p style="margin: 4px 0;">
         <strong>Total:</strong>
-        {% if saldo > 0 %}
-            <span style="color: #d32f2f; font-weight: bold;">R$ {{ saldo }} (devendo)</span>
+        {% if saldo < 0 %}
+            <span style="color: #d32f2f; font-weight: bold;">R$ {{ saldo|cut:"-" }} (negativo)</span>
         {% else %}
-            <span style="color: #2e7d32; font-weight: bold;">Em dia</span>
+            <span style="color: #2e7d32; font-weight: bold;">R$ {{ saldo }} (positivo)</span>
         {% endif %}
     </p>
 </div>

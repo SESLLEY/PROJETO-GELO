@@ -5,7 +5,14 @@
 
 <div style="margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 6px; max-width: 250px;">
     <p style="margin: 4px 0;"><strong>Pago:</strong> R$ {{ total_pago }}</p>
-    <p style="margin: 4px 0;"><strong>Prazo:</strong> R$ {{ total_prazo }}</p>
-    <p style="margin: 4px 0;"><strong>Total:</strong> R$ {{ saldo }}</p>
+    <p style="margin: 4px 0;"><strong>Prazo:</strong> - R$ {{ total_prazo }}</p>
+    <p style="margin: 4px 0;">
+        <strong>Total:</strong>
+        {% if saldo > 0 %}
+            <span style="color: #d32f2f; font-weight: bold;">R$ {{ saldo }} (devendo)</span>
+        {% else %}
+            <span style="color: #2e7d32; font-weight: bold;">Em dia</span>
+        {% endif %}
+    </p>
 </div>
 {% endblock %}

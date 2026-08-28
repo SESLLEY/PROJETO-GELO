@@ -35,7 +35,7 @@ class ClienteAdmin(admin.ModelAdmin):
         extra_context.update({
             'total_pago': total_pago,
             'total_prazo': total_prazo,
-            'saldo': total_prazo - total_pago,
+            'saldo': total_pago - total_prazo,
         })
 
         return super().change_view(

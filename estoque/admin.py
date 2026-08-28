@@ -1,5 +1,6 @@
 from datetime import timedelta
-
+from django import forms
+from django.db import models as django_models
 from django.contrib import admin
 from django.db.models import Count, Sum
 from django.template.response import TemplateResponse
@@ -18,6 +19,10 @@ class ClienteAdmin(admin.ModelAdmin):
     list_display = ('nome', 'parceiro', 'ativo')
     inlines = [VendaInline]
     change_form_template = "admin/estoque/cliente/change_form.html"
+
+    formfield_overrides = {
+        django_models.TextField: {'widget': forms.Textarea(attrs={'rows': 1})},
+    }
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = extra_context or {}

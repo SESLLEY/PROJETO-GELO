@@ -3,6 +3,8 @@
 {% block content %}
 <h1>{{ title }}</h1>
 
+<p style="color: red; font-size: 20px;">TESTE 123</p>
+
 <form method="get" style="margin-bottom: 20px; display: flex; gap: 10px; align-items: end;">
     <div>
         <label>Cliente:</label><br>
@@ -26,6 +28,35 @@
     <button type="submit">Filtrar</button>
     <a href="?" style="margin-left: 10px;">Limpar</a>
 </form>
+
+<div style="border: 1px solid #ccc; padding: 15px; border-radius: 6px; margin-bottom: 30px;">
+    <strong>Meta de Sacos da Semana</strong>
+    <span style="color: #666; font-size: 13px;">({{ inicio_semana|date:"d/m" }} a {{ fim_semana|date:"d/m" }})</span>
+    <div style="font-size: 28px; margin: 8px 0;">{{ total_sacos_semana }} sacos</div>
+
+<div style="display: flex; gap: 15px; flex-wrap: wrap;">
+    {% for m in metas %}
+
+        {% if m.batida %}
+            <div style="padding: 8px 14px; border-radius: 6px; border: 1px solid #4caf50; background: #e8f5e9;">
+                ✅ Meta {{ m.meta }} sacos — R$ {{ m.bonus }}
+            </div>
+        {% else %}
+            <div style="padding: 8px 14px; border-radius: 6px; border: 1px solid #ddd; background: #f9f9f9;">
+                ⬜ Meta {{ m.meta }} sacos — R$ {{ m.bonus }}
+            </div>
+        {% endif %}
+
+    {% endfor %}
+</div>
+
+    {% if bonus_atual > 0 %}
+    <div style="margin-top: 10px; font-weight: bold; color: #2e7d32;">
+        🎉 Bônus da semana: R$ {{ bonus_atual }}
+    </div>
+    {% endif %}
+</div>
+
 
 <div style="display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap;">
 

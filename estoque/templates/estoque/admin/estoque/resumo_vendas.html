@@ -1,0 +1,31 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+<div style="display: flex; gap: 20px; margin-bottom: 30px;">
+    <div style="border: 1px solid #ccc; padding: 15px; border-radius: 6px;">
+        <strong>Total de vendas</strong><br>
+        <span style="font-size: 24px;">{{ total_vendas }}</span>
+    </div>
+    <div style="border: 1px solid #ccc; padding: 15px; border-radius: 6px;">
+        <strong>Pagas</strong><br>
+        <span style="font-size: 24px;">{{ vendas_pagas }}</span>
+    </div>
+    <div style="border: 1px solid #ccc; padding: 15px; border-radius: 6px;">
+        <strong>Pendentes</strong><br>
+        <span style="font-size: 24px;">{{ vendas_pendentes }}</span>
+    </div>
+</div>
+
+<h2>Vendas por produto</h2>
+<table>
+    <tr><th>Produto</th><th>Qtd. de vendas</th></tr>
+    {% for item in vendas_por_produto %}
+    <tr>
+        <td>{{ item.produto__nome }}</td>
+        <td>{{ item.total }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

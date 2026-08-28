@@ -1,6 +1,9 @@
+from datetime import timedelta
+
 from django.contrib import admin
 from django.db.models import Count, Sum
 from django.template.response import TemplateResponse
+from django.utils import timezone
 from .models import Cliente, Produto, Venda, ResumoVendas
 
 
@@ -105,6 +108,35 @@ class ResumoVendasAdmin(admin.ModelAdmin):
             .order_by('-total')
         )
 
+        # ==============================
+        # METAS DE SACOS DA SEMANA
+        # ==============================
+
+        hoje = timezone.now().date()
+        inicio_semana = hoje - timedelta(days=hoje.weekday())  # segunda-feira
+        fim_semana = inicio_semana + timedelta(days=6)         # domingo
+
+        vendas_semana = Venda.objects.filter(
+            data__date__gte=inicio_semana,
+            data__date__lte=fim_semana
+        )
+
+        total_sacos_semana = vendas_semana.aggregate(
+            total=Sum('quantidade')
+        )['total'] or 0
+
+        metas_config = [(250, 20), (350, 30), (450, 40), (550, 50)]
+
+        metas = [
+            {'meta': meta, 'bonus': bonus, 'batida': total_sacos_semana >= meta}
+            for meta, bonus in metas_config
+        ]
+
+        bonus_atual = 0
+        for m in metas:
+            if m['batida']:
+                bonus_atual = m['bonus']
+
         extra_context = extra_context or {}
 
         extra_context.update({
@@ -120,6 +152,11 @@ class ResumoVendasAdmin(admin.ModelAdmin):
             'cliente_selecionado': cliente_id,
             'data_inicio': data_inicio or '',
             'data_fim': data_fim or '',
+            'total_sacos_semana': total_sacos_semana,
+            'metas': metas,
+            'bonus_atual': bonus_atual,
+            'inicio_semana': inicio_semana,
+            'fim_semana': fim_semana,
         })
 
         return TemplateResponse(

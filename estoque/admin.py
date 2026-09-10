@@ -113,6 +113,9 @@ class ResumoVendasAdmin(admin.ModelAdmin):
             .annotate(total=Count('id'))
             .order_by('-total')
         )
+        total_sacos = vendas.aggregate(
+            total=Sum('quantidade')
+         )['total'] or 0
 
         # ==============================
         # METAS DE SACOS DA SEMANA
@@ -170,6 +173,7 @@ class ResumoVendasAdmin(admin.ModelAdmin):
             'total_valor_vendas': total_valor_vendas,
             'total_pago': total_pago,
             'total_prazo': total_prazo,
+            'total_sacos': total_sacos,
             'vendas_por_produto': vendas_por_produto,
             'clientes': Cliente.objects.all().order_by('nome'),
             'cliente_selecionado': cliente_id,

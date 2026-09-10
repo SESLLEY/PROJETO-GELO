@@ -7,6 +7,7 @@ from django.db.models import Count, Sum
 from django.template.response import TemplateResponse
 from django.utils import timezone
 from .models import Cliente, Produto, Venda, ResumoVendas
+import json
 
 
 class VendaInline(admin.TabularInline):
@@ -149,6 +150,47 @@ class ResumoVendasAdmin(admin.ModelAdmin):
             if m['batida']:
                 bonus_atual = m['bonus']
 
+        # ==============================
+        # GRÁFICO DE SACOS - ÚLTIMAS 3 SEMANAS
+        # ==============================
+
+        dias_grafico = 21
+        data_final_grafico = fim_semana
+        data_inicial_grafico = data_final_grafico - timedelta(days=dias_grafico - 1)
+
+        vendas_grafico = Venda.objects.filter(
+            data__date__gte=data_inicial_grafico,
+            data__date__lte=data_final_grafico
+        )
+
+        sacos_por_dia = (
+           vendas_grafico
+            .values('data__date')
+            .annotate(total=Sum('quantidade'))
+        )
+        sacos_dict = {item['data__date']: item['total'] for item in sacos_por_dia}
+
+        grafico_labels = []
+        grafico_valores = []
+        dia_atual = data_inicial_grafico
+        while dia_atual <= data_final_grafico:
+            grafico_labels.append(dia_atual.strftime('%d/%m'))
+            grafico_valores.append(sacos_dict.get(dia_atual, 0))
+            dia_atual += timedelta(days=1)
+        grafico_labels = []
+        grafico_valores = []
+
+        for i in range(2, -1, -1):  # 2 semanas atrás, 1 semana atrás, semana atual
+            inicio_sem = inicio_semana - timedelta(weeks=i)
+            fim_sem = inicio_sem + timedelta(days=6)
+
+            total_sem = Venda.objects.filter(
+                data__date__gte=inicio_sem,
+                data__date__lte=fim_sem
+            ).aggregate(total=Sum('quantidade'))['total'] or 0
+
+            grafico_labels.append(f"{inicio_sem.strftime('%d/%m')} a {fim_sem.strftime('%d/%m')}")
+            grafico_valores.append(total_sem)
         # Links de navegação entre semanas, preservando os filtros ativos
         base_params = {}
         if cliente_id:
@@ -187,6 +229,8 @@ class ResumoVendasAdmin(admin.ModelAdmin):
             'semana_offset': semana_offset,
             'url_semana_anterior': _semana_url(semana_offset - 1),
             'url_semana_proxima': _semana_url(semana_offset + 1),
+            'grafico_labels': json.dumps(grafico_labels),
+            'grafico_valores': json.dumps(grafico_valores),
         })
 
         return TemplateResponse(

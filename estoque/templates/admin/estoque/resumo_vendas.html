@@ -80,6 +80,43 @@
     </div>
 </div>
 
+<!-- GRÁFICO DE SACOS - ÚLTIMAS 3 SEMANAS -->
+
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-chart-line"></i>
+        <strong>Sacos vendidos por dia (últimas 3 semanas)</strong>
+    </div>
+    <div class="card-body">
+        <canvas id="graficoSacos" height="80"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+    const ctx = document.getElementById('graficoSacos');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ grafico_labels|safe }},
+            datasets: [{
+                label: 'Sacos vendidos',
+                data: {{ grafico_valores|safe }},
+                borderColor: '#0dcaf0',
+                backgroundColor: 'rgba(13, 202, 240, 0.15)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+</script>
+
 <!-- CARDS DE RESUMO -->
 <div class="row g-3 mb-4">
 

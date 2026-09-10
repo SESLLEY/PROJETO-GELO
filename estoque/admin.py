@@ -180,7 +180,7 @@ class ResumoVendasAdmin(admin.ModelAdmin):
         grafico_labels = []
         grafico_valores = []
 
-        for i in range(2, -1, -1):  # 2 semanas atrás, 1 semana atrás, semana atual
+        for i in range(4, -1, -1):  # 4 semanas atrás até a semana atual (5 semanas)
             inicio_sem = inicio_semana - timedelta(weeks=i)
             fim_sem = inicio_sem + timedelta(days=6)
 

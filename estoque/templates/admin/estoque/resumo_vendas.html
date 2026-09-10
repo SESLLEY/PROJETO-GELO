@@ -80,28 +80,33 @@
     </div>
 </div>
 
-<!-- GRÁFICO DE SACOS - ÚLTIMAS 3 SEMANAS -->
-
+<!-- GRÁFICO DE SACOS - ÚLTIMAS 5 SEMANAS -->
 <div class="card mb-4">
     <div class="card-header">
         <i class="fas fa-chart-line"></i>
-        <strong>Sacos vendidos por dia (últimas 3 semanas)</strong>
+        <strong>Sacos vendidos por semana (últimas 5 semanas)</strong>
     </div>
     <div class="card-body">
         <canvas id="graficoSacos" height="80"></canvas>
     </div>
 </div>
 
+{{ grafico_labels|json_script:"grafico-labels" }}
+{{ grafico_valores|json_script:"grafico-valores" }}
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script>
+    const grafico_labels = JSON.parse(document.getElementById('grafico-labels').textContent);
+    const grafico_valores = JSON.parse(document.getElementById('grafico-valores').textContent);
+
     const ctx = document.getElementById('graficoSacos');
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: {{ grafico_labels|safe }},
+            labels: grafico_labels,
             datasets: [{
                 label: 'Sacos vendidos',
-                data: {{ grafico_valores|safe }},
+                data: grafico_valores,
                 borderColor: '#0dcaf0',
                 backgroundColor: 'rgba(13, 202, 240, 0.15)',
                 fill: true,
@@ -130,7 +135,6 @@
         </div>
     </div>
 
-
     <div class="col-6 col-md-4 col-lg-2">
         <div class="card text-center h-100">
             <div class="card-body">
@@ -140,7 +144,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="col-6 col-md-4 col-lg-2">
         <div class="card text-center h-100">

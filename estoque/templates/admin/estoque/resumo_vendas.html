@@ -66,6 +66,17 @@
             <strong>Bônus da semana: R$ {{ bonus_atual }}</strong>
         </div>
         {% endif %}
+
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ url_semana_anterior }}" class="btn btn-sm btn-outline-secondary">
+                <i class="fas fa-chevron-left"></i> Semana anterior
+            </a>
+            {% if semana_offset < 0 %}
+            <a href="{{ url_semana_proxima }}" class="btn btn-sm btn-outline-secondary">
+                Próxima semana <i class="fas fa-chevron-right"></i>
+            </a>
+            {% endif %}
+        </div>
     </div>
 </div>
 

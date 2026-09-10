@@ -1,4 +1,5 @@
 from datetime import timedelta
+from urllib.parse import urlencode
 from django import forms
 from django.db import models as django_models
 from django.contrib import admin
@@ -117,8 +118,11 @@ class ResumoVendasAdmin(admin.ModelAdmin):
         # METAS DE SACOS DA SEMANA
         # ==============================
 
+        semana_offset = int(request.GET.get('semana', 0) or 0)
+
         hoje = timezone.now().date()
-        inicio_semana = hoje - timedelta(days=hoje.weekday())  # segunda-feira
+        inicio_semana_atual = hoje - timedelta(days=hoje.weekday())  # segunda-feira desta semana
+        inicio_semana = inicio_semana_atual + timedelta(weeks=semana_offset)
         fim_semana = inicio_semana + timedelta(days=6)         # domingo
 
         vendas_semana = Venda.objects.filter(
@@ -142,6 +146,20 @@ class ResumoVendasAdmin(admin.ModelAdmin):
             if m['batida']:
                 bonus_atual = m['bonus']
 
+        # Links de navegação entre semanas, preservando os filtros ativos
+        base_params = {}
+        if cliente_id:
+            base_params['cliente'] = cliente_id
+        if data_inicio:
+            base_params['data_inicio'] = data_inicio
+        if data_fim:
+            base_params['data_fim'] = data_fim
+
+        def _semana_url(offset):
+            params = base_params.copy()
+            params['semana'] = offset
+            return '?' + urlencode(params)
+
         extra_context = extra_context or {}
 
         extra_context.update({
@@ -162,6 +180,9 @@ class ResumoVendasAdmin(admin.ModelAdmin):
             'bonus_atual': bonus_atual,
             'inicio_semana': inicio_semana,
             'fim_semana': fim_semana,
+            'semana_offset': semana_offset,
+            'url_semana_anterior': _semana_url(semana_offset - 1),
+            'url_semana_proxima': _semana_url(semana_offset + 1),
         })
 
         return TemplateResponse(
